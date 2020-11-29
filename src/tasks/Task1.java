@@ -4,9 +4,10 @@ import common.Person;
 import common.PersonService;
 import common.Task;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /*
@@ -18,20 +19,31 @@ import java.util.stream.Collectors;
  */
 public class Task1 implements Task {
 
-  // !!! Редактируйте этот метод !!!
-  private List<Person> findOrderedPersons(List<Integer> personIds) {
-    Set<Person> persons = PersonService.findPersons(personIds);
-    return Collections.emptyList();
-  }
+    // !!! Редактируйте этот метод !!!
+    private List<Person> findOrderedPersons(List<Integer> personIds) {
+        Set<Person> persons = PersonService.findPersons(personIds);
 
-  @Override
-  public boolean check() {
-    List<Integer> ids = List.of(1, 2, 3);
+        // перекладываем каждую персону с ключом как ее айдишник в мапу O(n)
+        Map<Integer, Person> sortedPersons = persons.stream()
+                .collect(Collectors.toMap(
+                        Person::getId,
+                        Function.identity()
+                ));
 
-    return findOrderedPersons(ids).stream()
-        .map(Person::getId)
-        .collect(Collectors.toList())
-        .equals(ids);
-  }
+        // на каждый айдишник листа достаем из мапы персону за O(1), общее время O(n)
+        return personIds.stream()
+                .map(sortedPersons::get)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean check() {
+        List<Integer> ids = List.of(1, 2, 3);
+
+        return findOrderedPersons(ids).stream()
+                .map(Person::getId)
+                .collect(Collectors.toList())
+                .equals(ids);
+    }
 
 }
