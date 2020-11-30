@@ -41,6 +41,15 @@ public class Task8 implements Task {
         if ((person.getSecondName() != null) && (person.getFirstName() != null)) {
             return person.getSecondName() + " " + person.getFirstName();
         }
+
+        if (person.getSecondName() != null) {
+            return person.getSecondName();
+        }
+
+        if (person.getFirstName() != null) {
+            return person.getFirstName();
+        }
+
         return "";
     }
 
