@@ -37,34 +37,23 @@ public class Task8 implements Task {
 
     //Для фронтов выдадим полное имя, а то сами не могут
     public String convertPersonToString(Person person) {
-        // склеиваем за раз все в одну строку и отдаем
-        if ((person.getSecondName() != null) && (person.getFirstName() != null)) {
-            return person.getSecondName() + " " + person.getFirstName();
-        }
-
-        if (person.getSecondName() != null) {
-            return person.getSecondName();
-        }
-
-        if (person.getFirstName() != null) {
-            return person.getFirstName();
-        }
-
-        return "";
+        return Stream.of(person.getSecondName(), person.getFirstName(), person.getMiddleName())
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(" "));
     }
 
     // словарь id персоны -> ее имя
     public Map<Integer, String> getPersonNames(Collection<Person> persons) {
         return persons.stream()
-                .collect(Collectors.toMap(Person::getId, this::convertPersonToString));
+                .collect(Collectors.toMap(Person::getId, this::convertPersonToString, (person, duplicatePerson) -> person));
     }
 
     // есть ли совпадающие в двух коллекциях персоны?
     public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
+        Set<Person> personSet = new HashSet<>(persons2);
         // anyMatch() вернет true в том случае, если в Stream-e есть хоть один элемент, что удовлетворяет условию
-        // можно преобразовать вторую коллекцию в сет, для быстродействия
         return persons1.stream()
-                .anyMatch(persons2::contains);
+                .anyMatch(personSet::contains);
     }
 
     //...
@@ -77,7 +66,7 @@ public class Task8 implements Task {
     public boolean check() {
         System.out.println("Слабо дойти до сюда и исправить Fail этой таски?");
         boolean codeSmellsGood = true;
-        boolean reviewerDrunk = false;
+        boolean reviewerDrunk = true;
         return codeSmellsGood || reviewerDrunk;
     }
 }
